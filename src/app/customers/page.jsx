@@ -6,14 +6,27 @@ import fetchCustomers from "./fetchCustomers";
 
 export default function Page() {
   const [customerInfos, setCustomerInfos] = useState([]);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAndSetCustomer = async () => {
-      const customerData = await fetchCustomers();
-      setCustomerInfos(customerData);
+      try {
+        setLoading(true);
+        const customerData = await fetchCustomers();
+        setCustomerInfos(customerData);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
+      }
     };
+
     fetchAndSetCustomer();
   }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <>
