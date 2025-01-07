@@ -6,7 +6,6 @@ const nextConfig = {
     API_ENDPOINT: process.env.API_ENDPOINT,
   },
 }
-
 module.exports = nextConfig
 
 // // require('dotenv').config()
