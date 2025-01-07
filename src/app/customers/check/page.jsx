@@ -1,3 +1,8 @@
+"use client";
+import { Suspense } from "react";
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 import OneCustomerInfoCard from "@/app/components/one_customer_info_card.jsx";
 
 async function fetchCustomer(id) {
@@ -10,9 +15,32 @@ async function fetchCustomer(id) {
   return res.json();
 }
 
-export default async function ReadPage({ query }) {
-  const { id } = query;
-  const customerInfo = await fetchCustomer(id);
+export default function CheckPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CheckContent />
+    </Suspense>
+  );
+}
+
+function CheckContent() {
+  const searchParams = useSearchParams();
+  const id = searchParams.get("customer_id");
+  const [customerInfo, setCustomerInfo] = useState(null);
+
+  useEffect(() => {
+    const getCustomer = async () => {
+      if (id) {
+        const data = await fetchCustomer(id);
+        setCustomerInfo(data);
+      }
+    };
+    getCustomer();
+  }, [id]);
+
+  if (!customerInfo) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -20,9 +48,9 @@ export default async function ReadPage({ query }) {
       <div className="card bordered bg-white border-blue-200 border-2 max-w-sm m-4">
         <OneCustomerInfoCard {...customerInfo[0]} />
       </div>
-      <button className="btn btn-outline btn-accent">
-        <a href="/customers">一覧に戻る</a>
-      </button>
+      <Link href="/customers" className="btn btn-outline btn-accent">
+        一覧に戻る
+      </Link>
     </>
   );
 }
