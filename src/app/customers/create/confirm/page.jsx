@@ -1,10 +1,21 @@
 "use client";
+import { Suspense } from "react";
 import OneCustomerInfoCard from "@/app/components/one_customer_info_card.jsx";
 import fetchCustomer from "./fetchCustomer";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+// メインコンポーネントをSuspenseでラップ
 export default function ConfirmPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ConfirmContent />
+    </Suspense>
+  );
+}
+
+// 実際のコンテンツを別コンポーネントに分離
+function ConfirmContent() {
   const router = useRouter();
   const customer_id = useSearchParams().get("customer_id");
   const [customer, setCustomer] = useState(null);
